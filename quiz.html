@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Comunicación en el Siglo XX</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 25px 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .quiz-content {
+            padding: 25px 20px;
+        }
+        
+        .question {
+            display: none;
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        .question.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .question h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .options {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+        
+        .options li {
+            margin-bottom: 12px;
+        }
+        
+        .options label {
+            display: block;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
+        .options label:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        
+        .options label.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .options label.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress {
+            background: #e9ecef;
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.6s ease;
+            border-radius: 3px;
+        }
+        
+        .results {
+            text-align: center;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .score.excellent {
+            color: #28a745;
+        }
+        
+        .score.good {
+            color: #ffc107;
+        }
+        
+        .score.needs-improvement {
+            color: #dc3545;
+        }
+        
+        .feedback {
+            font-size: 18px;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .feedback.excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback.good {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .feedback.needs-improvement {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .question h2 {
+                font-size: 18px;
+            }
+            
+            .options label {
+                font-size: 15px;
+                padding: 12px 15px;
+            }
+            
+            .score {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Quiz: Comunicación del Siglo XXI</h1>
+            <p>Descubre cuánto sabes sobre la revolución digital de la comunicación</p>
+        </div>
+        
+        <div class="quiz-content">
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <!-- Pregunta 1 -->
+            <div class="question active" data-question="1">
+                <div class="question-number">Pregunta 1 de 5</div>
+                <h2>¿Cuáles son las principales tecnologías que cambiaron la comunicación en el siglo XXI?</h2>
+                <ul class="options">
+                    <li><label><input type="radio" name="q1" value="a"> Radio y televisión</label></li>
+                    <li><label><input type="radio" name="q1" value="b"> Internet y teléfonos inteligentes</label></li>
+                    <li><label><input type="radio" name="q1" value="c"> Telégrafo y teléfono</label></li>
+                    <li><label><input type="radio" name="q1" value="d"> Cartas y fax</label></li>
+                </ul>
+            </div>
+            
+            <!-- Pregunta 2 -->
+            <div class="question" data-question="2">
+                <div class="question-number">Pregunta 2 de 5</div>
+                <h2>¿Cuál es una característica principal de la comunicación en el siglo XXI?</h2>
+                <ul class="options">
+                    <li><label><input type="radio" name="q2" value="a"> Es lenta y limitada</label></li>
+                    <li><label><input type="radio" name="q2" value="b"> Solo funciona localmente</label></li>
+                    <li><label><input type="radio" name="q2" value="c"> Es instantánea, variada e interactiva</label></li>
+                    <li><label><input type="radio" name="q2" value="d"> Requiere equipos muy costosos</label></li>
+                </ul>
+            </div>
+            
+            <!-- Pregunta 3 -->
+            <div class="question" data-question="3">
+                <div class="question-number">Pregunta 3 de 5</div>
+                <h2>¿Qué tipo de contenido multimedia se popularizó en la comunicación digital?</h2>
+                <ul class="options">
+                    <li><label><input type="radio" name="q3" value="a"> Solo texto escrito</label></li>
+                    <li><label><input type="radio" name="q3" value="b"> Emojis, memes, videos y transmisiones en vivo</label></li>
+                    <li><label><input type="radio" name="q3" value="c"> Únicamente fotografías</label></li>
+                    <li><label><input type="radio" name="q3" value="d"> Solo llamadas de voz</label></li>
+                </ul>
+            </div>
+            
+            <!-- Pregunta 4 -->
+            <div class="question" data-question="4">
+                <div class="question-number">Pregunta 4 de 5</div>
+                <h2>¿Cuáles son ejemplos de plataformas que permiten compartir contenido en segundos?</h2>
+                <ul class="options">
+                    <li><label><input type="radio" name="q4" value="a"> Correo postal y telégrafo</label></li>
+                    <li><label><input type="radio" name="q4" value="b"> Radio y televisión tradicional</label></li>
+                    <li><label><input type="radio" name="q4" value="c"> Instagram y TikTok</label></li>
+                    <li><label><input type="radio" name="q4" value="d"> Periódicos y revistas</label></li>
+                </ul>
+            </div>
+            
+            <!-- Pregunta 5 -->
+            <div class="question" data-question="5">
+                <div class="question-number">Pregunta 5 de 5</div>
+                <h2>¿Qué funciones ofrecen las aplicaciones de mensajería instantánea como WhatsApp o Telegram?</h2>
+                <ul class="options">
+                    <li><label><input type="radio" name="q5" value="a"> Solo envío de texto</label></li>
+                    <li><label><input type="radio" name="q5" value="b"> Texto, audios, fotos y videollamadas</label></li>
+                    <li><label><input type="radio" name="q5" value="c"> Únicamente llamadas de voz</label></li>
+                    <li><label><input type="radio" name="q5" value="d"> Solo compartir ubicaciones</label></li>
+                </ul>
+            </div>
+            
+            <!-- Resultados -->
+            <div class="results" id="results">
+                <h2>🎉 ¡Quiz Completado!</h2>
+                <div class="score" id="scoreDisplay"></div>
+                <div class="feedback" id="feedbackText"></div>
+                <button class="btn" onclick="restartQuiz()">Reiniciar Quiz</button>
+            </div>
+            
+            <button class="btn" id="nextBtn" onclick="nextQuestion()">Siguiente</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        let score = 0;
+        const totalQuestions = 5;
+        const correctAnswers = {
+            q1: 'b', // Internet y teléfonos inteligentes
+            q2: 'c', // Es instantánea, variada e interactiva
+            q3: 'b', // Emojis, memes, videos y transmisiones en vivo
+            q4: 'c', // Instagram y TikTok
+            q5: 'b'  // Texto, audios, fotos y videollamadas
+        };
+
+        function updateProgress() {
+            const progress = ((currentQuestion - 1) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function nextQuestion() {
+            const selectedAnswer = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            
+            if (!selectedAnswer) {
+                alert('Por favor selecciona una respuesta');
+                return;
+            }
+
+            // Verificar respuesta y mostrar feedback
+            const options = document.querySelectorAll(`input[name="q${currentQuestion}"]`);
+            options.forEach(option => {
+                const label = option.parentElement;
+                if (option.value === correctAnswers[`q${currentQuestion}`]) {
+                    label.classList.add('correct');
+                    if (option.checked) {
+                        score++;
+                    }
+                } else if (option.checked) {
+                    label.classList.add('incorrect');
+                }
+                option.disabled = true;
+            });
+
+            // Esperar un momento para mostrar el feedback
+            setTimeout(() => {
+                if (currentQuestion < totalQuestions) {
+                    // Ocultar pregunta actual
+                    document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+                    
+                    // Mostrar siguiente pregunta
+                    currentQuestion++;
+                    document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
+                    updateProgress();
+                    
+                    if (currentQuestion === totalQuestions) {
+                        document.getElementById('nextBtn').textContent = 'Ver Resultados';
+                    }
+                } else {
+                    // Mostrar resultados
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        function showResults() {
+            document.querySelector(`[data-question="${currentQuestion}"]`).style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            const resultsDiv = document.getElementById('results');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const feedbackText = document.getElementById('feedbackText');
+            
+            const percentage = (score / totalQuestions) * 100;
+            scoreDisplay.textContent = `${score}/${totalQuestions} (${percentage.toFixed(0)}%)`;
+            
+            let feedbackClass, feedbackMessage;
+            
+            if (percentage >= 80) {
+                feedbackClass = 'excellent';
+                feedbackMessage = '¡Excelente! Dominas perfectamente la comunicación digital del siglo XXI.';
+            } else if (percentage >= 60) {
+                feedbackClass = 'good';
+                feedbackMessage = '¡Bien hecho! Tienes buenos conocimientos sobre la comunicación moderna.';
+            } else {
+                feedbackClass = 'needs-improvement';
+                feedbackMessage = 'Necesitas aprender más sobre las nuevas tecnologías de comunicación digital.';
+            }
+            
+            scoreDisplay.className = `score ${feedbackClass}`;
+            feedbackText.className = `feedback ${feedbackClass}`;
+            feedbackText.textContent = feedbackMessage;
+            
+            resultsDiv.classList.add('show');
+            updateProgress();
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            score = 0;
+            
+            // Resetear todas las preguntas
+            document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+            document.querySelector('[data-question="1"]').classList.add('active');
+            
+            // Resetear todas las opciones
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.checked = false;
+                input.disabled = false;
+                input.parentElement.classList.remove('correct', 'incorrect');
+            });
+            
+            // Ocultar resultados
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('nextBtn').textContent = 'Siguiente';
+            
+            updateProgress();
+        }
+
+        // Inicializar
+        updateProgress();
+    </script>
+</body>
+</html>
